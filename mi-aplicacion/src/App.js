@@ -1,11 +1,13 @@
-import logo from './logo.svg';
+import React from 'react';
+import TablaPersonajes from './TablaPersonajes';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <h1>Personajes</h1>
+        <TablaPersonajes />
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>

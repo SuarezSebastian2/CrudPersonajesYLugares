@@ -1,12 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
 app = FastAPI()
 
-DATABASE_URL = "mysql://username:password@localhost/PruebaABC"
+DATABASE_URL = "mysql://root:1234@127.0.0.1:8000/PruebaABC"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -26,6 +26,7 @@ class PersonajeDB(Base):
     edad = Column(Integer)
     origen_id = Column(Integer, ForeignKey("lugares.id"))
     origen = relationship("Lugar", back_populates="personajes")
+
 
 class PersonajeCreate(BaseModel):
     nombre: str
