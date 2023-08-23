@@ -6,7 +6,6 @@ function TablaPersonajes() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Cambia la URL según la ubicación de tu API
         axios.get('http://127.0.0.1:8000/personajes/')
             .then((response) => {
                 setPersonajes(response.data);
