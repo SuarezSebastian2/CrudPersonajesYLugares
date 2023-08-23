@@ -19,6 +19,7 @@ class Lugar(Base):
     descripcion = Column(String)
     personajes = relationship("Personaje", back_populates="origen")
 
+
 class PersonajeDB(Base):
     __tablename__ = "personajes"
     id = Column(Integer, primary_key=True, index=True)
