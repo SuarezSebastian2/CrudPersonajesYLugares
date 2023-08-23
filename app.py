@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 
 app = FastAPI()
 
-DATABASE_URL = "mysql://root:1234@127.0.0.1:8000/PruebaABC"
+DATABASE_URL = "mysql://root:1234@localhost/PruebaABC"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

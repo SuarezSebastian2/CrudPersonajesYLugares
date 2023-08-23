@@ -36,7 +36,7 @@ function TablaPersonajes() {
                                 <td>{personaje.id}</td>
                                 <td>{personaje.nombre}</td>
                                 <td>{personaje.edad}</td>
-                                <td>{personaje.origen_id}</td> {/* Ajusta según la estructura de tus datos */}
+                                <td>{personaje.origen_id}</td> 
                             </tr>
                         ))}
                     </tbody>
