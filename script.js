@@ -16,7 +16,7 @@ function loadCharacters() {
                 deleteButton.innerText = 'Delete';
                 deleteButton.onclick = () => deleteCharacter(character.id);
                 actions.appendChild(deleteButton);
-            }); // Esta es la llave de cierre correcta para el forEach
+            }); 
         })
         .catch(error => console.error('Error:', error));
 }
