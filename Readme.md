@@ -2,7 +2,7 @@
 
 Este proyecto es una aplicación web que permite gestionar personajes y lugares (orígenes, locaciones, etc.) a través de una interfaz de usuario amigable.
 
-![image](https://github.com/SuarezSebastian2/PruebaABC/assets/78248849/9c4ba9dd-d81c-4204-84ba-0b72b661ae36)
+![image](https://github.com/SuarezSebastian2/PruebaABC/assets/78248849/8d15d920-b28b-4df2-9c8a-c86894e2705d)
 
 
 ## Características
