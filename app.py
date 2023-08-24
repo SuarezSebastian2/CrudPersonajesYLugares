@@ -1,88 +1,88 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS 
 
-app = FastAPI()
+app = Flask(__name__)
+CORS(app, origins=['http://127.0.0.1:5500']) # Esto es para que reciva peticiones desde el frontend
 
-DATABASE_URL = "mysql://root:1234@localhost/PruebaABC"
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost/PruebaABC'
+db = SQLAlchemy(app)
 
-Base = declarative_base()
+class Location(db.Model):
+    __tablename__ = 'lugares'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(255))
+    descripcion = db.Column(db.Text)
+    characters = db.relationship('Character', backref='origin')
 
-class Lugar(Base):
-    __tablename__ = "lugares"
-    id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, index=True)
-    descripcion = Column(String)
-    personajes = relationship("Personaje", back_populates="origen")
+class Character(db.Model):
+    __tablename__ = 'personajes'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(255))
+    edad = db.Column(db.Integer)
+    origen_id = db.Column(db.Integer, db.ForeignKey('lugares.id'))
 
+@app.route('/character', methods=['POST'])
+def add_character():
+    data = request.json
+    new_character = Character(nombre=data['nombre'], edad=data['edad'], origen_id=data['origen_id'])
+    db.session.add(new_character)
+    db.session.commit()
+    return jsonify({'message': 'Character added'}), 201
 
-class PersonajeDB(Base):
-    __tablename__ = "personajes"
-    id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, index=True)
-    edad = Column(Integer)
-    origen_id = Column(Integer, ForeignKey("lugares.id"))
-    origen = relationship("Lugar", back_populates="personajes")
+@app.route('/characters', methods=['GET'])
+def get_characters():
+    characters = Character.query.all()
+    return jsonify([{'id': character.id, 'nombre': character.nombre, 'edad': character.edad, 'origen_id': character.origen_id} for character in characters])
 
+@app.route('/character/<int:id>', methods=['PUT'])
+def update_character(id):
+    character = Character.query.get(id)
+    data = request.json
+    character.nombre = data['nombre']
+    character.edad = data['edad']
+    character.origen_id = data['origen_id']
+    db.session.commit()
+    return jsonify({'message': 'Character updated'}), 200
 
-class PersonajeCreate(BaseModel):
-    nombre: str
-    edad: int
-    origen_id: int
+@app.route('/character/<int:id>', methods=['DELETE'])
+def delete_character(id):
+    character = Character.query.get(id)
+    db.session.delete(character)
+    db.session.commit()
+    return jsonify({'message': 'Character deleted'}), 200
 
-@app.post("/personajes/")
-def crear_personaje(personaje: PersonajeCreate):
-    db = SessionLocal()
-    db_personaje = PersonajeDB(**personaje.dict())
-    db.add(db_personaje)
-    db.commit()
-    db.refresh(db_personaje)
-    db.close()
-    return db_personaje
+@app.route('/location', methods=['POST'])
+def add_location():
+    data = request.json
+    new_location = Location(nombre=data['nombre'], descripcion=data['descripcion'])
+    db.session.add(new_location)
+    db.session.commit()
+    return jsonify({'message': 'Location added'}), 201
 
-@app.get("/personajes/")
-def leer_personajes():
-    db = SessionLocal()
-    personajes = db.query(PersonajeDB).all()
-    db.close()
-    return personajes
+@app.route('/locations', methods=['GET'])
+def get_locations():
+    locations = Location.query.all()
+    return jsonify([{'id': location.id, 'nombre': location.nombre, 'descripcion': location.descripcion} for location in locations])
 
-@app.get("/personajes/{personaje_id}")
-def leer_personaje(personaje_id: int):
-    db = SessionLocal()
-    personaje = db.query(PersonajeDB).filter(PersonajeDB.id == personaje_id).first()
-    db.close()
-    if personaje is None:
-        raise HTTPException(status_code=404, detail="Personaje no encontrado")
-    return personaje
-@app.put("/personajes/{personaje_id}")
-def actualizar_personaje(personaje_id: int, personaje: PersonajeCreate):
-    db = SessionLocal()
-    db_personaje = db.query(PersonajeDB).filter(PersonajeDB.id == personaje_id).first()
-    if db_personaje is None:
-        db.close()
-        raise HTTPException(status_code=404, detail="Personaje no encontrado")
-    for key, value in personaje.dict().items():
-        setattr(db_personaje, key, value)
-    db.commit()
-    db.refresh(db_personaje)
-    db.close()
-    return db_personaje
+@app.route('/location/<int:id>', methods=['PUT'])
+def update_location(id):
+    location = Location.query.get(id)
+    data = request.json
+    location.nombre = data['nombre']
+    location.descripcion = data['descripcion']
+    db.session.commit()
+    return jsonify({'message': 'Location updated'}), 200
 
-@app.delete("/personajes/{personaje_id}")
-def eliminar_personaje(personaje_id: int):
-    db = SessionLocal()
-    db_personaje = db.query(PersonajeDB).filter(PersonajeDB.id == personaje_id).first()
-    if db_personaje is None:
-        db.close()
-        raise HTTPException(status_code=404, detail="Personaje no encontrado")
-    db.delete(db_personaje)
-    db.commit()
-    db.close()
-    return {"message": "Personaje eliminado exitosamente"}
+@app.route('/location/<int:id>', methods=['DELETE'])
+def delete_location(id):
+    location = Location.query.get(id)
+    db.session.delete(location)
+    db.session.commit()
+    return jsonify({'message': 'Location deleted'}), 200
 
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
 

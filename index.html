@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Characters and Locations</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Locations</h1>
+        <button onclick="loadLocations()" class="btn btn-primary mb-2">Load Locations</button>
+        <form id="location-form">
+            <input type="text" placeholder="Name" id="location-name">
+            <input type="text" placeholder="Description" id="location-description">
+            <button type="submit" class="btn btn-success">Add Location</button>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="locations-table">
+            </tbody>
+        </table>
+        <h1>Characters</h1>
+        <button onclick="loadCharacters()" class="btn btn-primary mb-2">Load Characters</button>
+        <form id="character-form">
+            <input type="text" placeholder="Name" id="character-name">
+            <input type="number" placeholder="Age" id="character-age">
+            <input type="number" placeholder="Origin ID" id="character-origin-id">
+            <button type="submit" class="btn btn-success">Add Character</button>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Origin ID</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="characters-table">
+            </tbody>
+        </table>
+        
+        
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
